@@ -1,0 +1,31 @@
+Categories v 0.2 README
+Copyright:     Copyright 2009 by mikel evins, all rights reserved
+License:       Licensed under the Apache License, version 2.0
+               See the accompanying file "License" for more information
+
+
+    I. Introduction
+
+---------------
+I. INTRODUCTION
+---------------
+
+Categories is an experimental object system that provides polymorphic
+functions with multiple dispatch, user-defined structured data types,
+optional single or multiple inheritance, and programmable
+dispatch. The object system is language-neutral, with implementations
+provided for R5RS Scheme, Gambit-C Scheme with Gambit-specific
+features, and Clojure. There are small differences in the API and
+semantics from one language host to another, especially with regard to
+the way that assignment to object slots is treated.
+
+--------------------
+II. THE DISTRIBUTION
+--------------------
+
+A snapshot of Categories 0.2 is available from 
+
+  http://www.mikelevins.com/categories/categories_0.2.zip
+
+You can clone the Categories git repository from:
+
