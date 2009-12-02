@@ -1,0 +1,42 @@
+<project name="categories" default="build">
+  <property name="buildroot" location="."/>
+  <property name="lib.xg" location="${buildroot}/lib"/>
+  <property name="lib.clojure" location="/usr/local/clojure/clojure.jar"/>
+  <property name="lib.clojure.contrib" location="/usr/local/clojure/clojure-contrib/clojure-contrib.jar"/>
+  <property name="src" location="${buildroot}/src"/>
+  <property name="classdir" location="${buildroot}/classes"/>
+
+  <target name="clean">
+    <delete dir="${classdir}"/>
+  </target>
+
+  <target name="prepare">
+    <mkdir dir="${classdir}"/>
+    <mkdir dir="${classdir}/categories"/>
+  </target>
+
+  <target name="build" depends="clean,prepare">
+    <java classname="clojure.lang.Compile" failonerror="true">
+      <sysproperty key="clojure.compile.path" value="${classdir}/categories"/>
+      <classpath>
+        <path location="${lib.clojure}"/>
+        <path location="${lib.clojure.contrib}"/>
+        <path location="${src}"/>
+        <path location="${classdir}/categories"/>
+      </classpath>
+      <arg value="xg.categories.utils"/>
+      <arg value="xg.categories.structures"/>
+      <arg value="xg.categories.types"/>
+      <arg value="xg.categories.domains"/>
+      <arg value="xg.categories.functions"/>
+      <arg value="xg.categories"/>
+      </java>
+    <jar destfile="${lib.xg}/categories.jar"
+          basedir="${classdir}/categories">
+      <manifest>
+        <attribute name="Class-Path" value="."/>
+      </manifest>
+    </jar>    
+  </target>
+
+</project>
