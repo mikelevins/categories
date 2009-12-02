@@ -11,9 +11,9 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(ns com.mikelevins.categories.structures)
+(ns xg.categories.structures)
 
-(refer 'com.mikelevins.categories.utils)
+(refer 'xg.categories.utils)
 
 ;;; ======================================================================
 ;;; Type Tags

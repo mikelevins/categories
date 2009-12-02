@@ -11,13 +11,13 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(ns com.mikelevins.categories.functions
+(ns xg.categories.functions
   (:refer-clojure :exclude [type]))
 
-(refer 'com.mikelevins.categories.utils)
-(refer 'com.mikelevins.categories.structures)
-(refer 'com.mikelevins.categories.types)
-(refer 'com.mikelevins.categories.domains)
+(refer 'xg.categories.utils)
+(refer 'xg.categories.structures)
+(refer 'xg.categories.types)
+(refer 'xg.categories.domains)
 
 ;;; ======================================================================
 ;;; Functions

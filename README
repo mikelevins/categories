@@ -5,6 +5,10 @@ License:       Licensed under the Apache License, version 2.0
 
 
     I. Introduction
+   II. The Distribution
+  III. Using Categories
+   IV. The API
+    V. The Example Domains
 
 ---------------
 I. INTRODUCTION
@@ -13,19 +17,488 @@ I. INTRODUCTION
 Categories is an experimental object system that provides polymorphic
 functions with multiple dispatch, user-defined structured data types,
 optional single or multiple inheritance, and programmable
-dispatch. The object system is language-neutral, with implementations
-provided for R5RS Scheme, Gambit-C Scheme with Gambit-specific
-features, and Clojure. There are small differences in the API and
-semantics from one language host to another, especially with regard to
-the way that assignment to object slots is treated.
+dispatch. 
 
---------------------
+The object system is language-neutral, with implementations provided
+for R5RS Scheme, Gambit-C Scheme with Gambit-specific features, and
+Clojure. There are small differences in the API and semantics from one
+language host to another, especially with regard to the way that
+assignment to object slots is treated. Additional host languages may
+be supported in the future.
+
+You can use Categories by loading it into one of the supported host
+languages and writing code that uses Categories features. 
+
+Although this release of Categories is a very young version, and not
+in any sense production-ready, it is part of a larger
+product-development process, and is intended eventually to be suitable
+for use in production code. As the implementation evolves, preference
+will naturally be given to those features and host platforms that are
+in production use. Users of Categories will have the greatest
+influence on how it evolves.
+
+
+Caveats
+
+This is an early release, and some caveats are appropriate. 
+
+It's new code, and you may discover bugs.
+
+The API is very young, and likely not complete. You may find that there
+are operations you want to perform for which no convenient API is yet
+provided.
+
+Certain parts of the implementation are much less efficient than they
+could be. Especially, the implementation of the -c3- domain should use
+caches for precedence lists, but it doesn't, yet. For that reason,
+-c3- is currently much slower and much more wasteful of memory than it
+needs to be.
+
+The release doesn't yet include tools for building jarfiles or
+dynamically-loadable libraries, though it's not hard to make these,
+and you can expect a future release to include them.
+
+A comprehensive test suite is not yet included. The C3 and Flat
+examples provide some simpletests of the system. Future releases will
+include more comprehensive tests.
+
+---------------------
 II. THE DISTRIBUTION
---------------------
+---------------------
+
+A. Obtaining Categories
 
 A snapshot of Categories 0.2 is available from 
 
   http://www.mikelevins.com/categories/categories_0.2.zip
 
 You can clone the Categories git repository from:
+
+  git@codebasehq.com:bywicket/xg/categories.git
+
+The git repository is read-only; if you want to commit changes to the
+Categories source, contact mikel evins at mevins@me.com to talk about
+it.
+
+B. Loading Categories
+
+The distribution includes implementations written in Clojure and in
+Scheme. The Clojure implementation can be found in the "clj"
+directory, and the Scheme implementations in the "scm" directory.
+
+Loadfiles are provided for each ofhte implementations:
+
+  clj/categories.clj
+    Loads the Clojure version
+  scm/load-gambit.scm
+    Loads the Gambit-C-specific version
+  scm/load-r5rs.scm
+    Loads the R5RS Scheme version
+
+To load and use Categories, first choose the version appropriate to
+you Scheme or Clojure environment, and then:
+
+1. Edit the loadfile. At the top of the file, a root pathname is
+   defined. Change the definition to correspond to where you have
+   placed the Categories distribution.
+
+2. Start a Scheme or Clojure session.
+
+3. Load the loadfile.
+
+At this point, you should have a working Categories system. You can
+test it by trying the C3 or flat examples distributed with the the
+release.
+
+--------------------
+III. USING CATEGORIES
+--------------------
+
+Categories separates the object system into three orthogonal pieces
+that manage three aspects of the system: representation, behavior, and
+taxonomy.
+
+  Types: descriptions of how values are represented. Types are
+         responsible for _representation_. Types comprise both the
+         built-in primitive types of the language on which Categories
+         is implemented, and also structured datatypes that can be
+         defined using Categories APIs.
+
+  Functions: objects that can be applied to values to compute new
+             values. Functions are responsible for
+             _behavior_. Functions in Categories are polymorphic; they
+             may execute different code depending on computable
+             characteristics of their arguments.
+
+  Domains: objects that describe relations among types. Domains are
+           responsible for _taxonomy_. A domain defines subtype and
+           supertype relationships among types (it it's a domain that
+           supports such relationships; it's possible to create a
+           domain that doesn't). It also defines how a function
+           chooses which method to execute for a given set of input
+           values.
+
+The motivation for designing Categories was to explore working with
+an object system that explicitly separates representation, behavior,
+and taxonomy into orthogonal pieces. Using Categories, you can define
+the layout of data, the operations available, and the classification
+of types, completely independently of each other. You can define one
+type as a subtype of another, without inheriting unwanted details of
+representation from the supertype. You can reuse the layout of data
+from another type without inheriting unneeded behavior. You can create
+any hierarchy of types you might need for a given application, without
+preventing the creation of a different arrangement of those same types
+for another one.
+
+You can also create novel dispatching algorithms, either by extending
+the ones that Categories provides, or by writing your own from
+scratch.
+
+-----------
+IV. THE API
+-----------
+
+Detailed API documentation is included in the language-specific
+directories. Certain API details differ, both because the languages
+are different, and because the native systems of types are
+different. This section provides a brief, language-neutral overview of
+the Categories API.
+
+The API, like Categories as a whole, can be conveniently divided into
+three sections: types, domains, and functions.
+
+Types
+
+Each Categories implementation defines a set of type objects that
+represent types built into the host language. In addition, a few extra
+types are defined, including:
+
+  <anything> 
+    The type of all values in the lnaguage. This type is particularly
+    useful as a root type in domains that support subtype/supertype
+    relations.
+
+  <type>
+    Types are first-class objects in Categories. <type> is the type of
+    such objects.
+
+  <structure>
+    Categories provides its own definition of a structured data type
+    that comprises named fields. The <structure> type is the common
+    type of all such values.
+
+  <synonym>
+    It can be useful to define a type that acts as a proxy for another
+    type, so that it's easy to change the representation of the type
+    without changing the API for it more than absolutely necessary. We
+    call such types "type synonyms", and <synonym> is the common type
+    of such types.
+
+  <category>
+    As a type synonym is a proxy for another type, a category is a
+    proxy for a group of other types. You can implement domains that
+    treat any value as a member of a category type, as long as it's a
+    member of one of the category's member types. <category> is the
+    type of category types.
+
+  <primitive-type>
+    The type of types built into the host language, or provided as
+    part of the Categories infrastructure. <structure>, for example,
+    is a value of type <primitive-type>.
+
+Specific implementations or domains may define additional types.
+
+
+Type Operations
+
+structure ([include]* ...) [keyspec]* ... => structure-object
+
+  Creates a new structure basis object. Instances of the new structure
+  type may be created by calling make (see below). Each include is a
+  reference to another structure-basis object; the newly-created
+  structure basis includes all the key definitions of the included
+  structure bases. Each keyspec is either the name of a key, which
+  will become the key used to access a field of any instsances of the
+  structure basis, or a list of the form:
+
+    (key-name 'default default-val 'setter setter-flag)
+
+  In Clojure, the symbols 'default and 'setter are given as the
+  keywords :default and :setter.
+
+  The default-value is a value that is used to initialize the key's
+  field in a newly-allocated instance if no initial value is
+  supplied. The setter-flag is a boolean, used to indicate whether the
+  key's field accepts assignments. By default, structure keys are
+  read-only.
+
+  Either the default or the setter qualifer may be omitted.
+
+get-key instance key => value
+
+  Returns the value stored on the structure instance at the given
+  key. If the structure type doesn't include the key, an error is
+  signaled.
+
+set-key! instance key value => instance'
+
+  Returns instance with the new value stored on the given key. If the
+  structure type doesn't include the key, or if the key is read-only,
+  an error is signaled.
+
+make structure-basis [key1 value1]* ... => structure-instance
+
+  Creates a new instance of the given structure basis. The arguments
+  after the structure basis are alternating keys and values; the new
+  instance is created with the given values stored on the
+  corresponding keys. If any of the keys are not defined as elements
+  of the structure basis, an error is signaled.
+
+synonym type => type-synonym
+
+  Returns a new type object that is a synonym for the input
+  type. Categories treats the synonym in every way as equivalent to
+  the input type. Synonyms can be useful for giving a domain-specific
+  identity to a general-purpose type. They can also be useful in cases
+  where the specifics of a type definition might change, and you want
+  to present an abstract type that doesn't have to change when its
+  representation does.
+
+category [type1]* ... => category-type
+
+  Returns a new type object that represents all types given in
+  [type1]*. AAny value that is a member of any of the category's
+  member types is considered a member of the category type. Category
+  types can be useful for APIs that are meant to operate identically
+  on a variety of disjoint types.
+
+type value => type-object
+
+  Returns the type object that represents the type of the value. The
+  type function always returns the most specific type of the value. A
+  domain may define subtype/supertype relations, so that a given value
+  may be considered an instance of several different types at the same
+  time, but the type function ignores all domain-defined type
+  relationships and returns only the specific, immediate type of the
+  value.
+
+instance-of? value type => true | false
+
+  Returns true if the type of the value is equal to type. Like the
+  type function, instance-of? ignores subtype/supertype relations.
+
+
+Functions
+
+make-function domain => function-object
+
+  Returns a value that can be applied to a sequence of arguments to
+  yield an output value. The domain determines the rules used by the
+  function for computing its result.
+
+  The function returned by make-function is polymorphic, and computes
+  no value itself; instead, it dispatches to a method selected by
+  examining its inputs according to the rules defined by its domain. A
+  newly-created function has no defined methods, and so cannot be
+  applied until methods are added, using the add-method! function.
+
+add-method! function method => function'
+
+  Returns function after the given method has been added to its method
+  table. Afterward, applying function to a sequence of arguments that
+  matches the signature of the given method results in that method
+  being applied to the arguments, and its return value being yielded
+  as the result of the function call. The exact representation of a
+  method signature, and the means used to select a method, are up to
+  the domain. The domain may also optionally define custom rules for
+  adding and removing methods on functions.
+
+remove-method! function signature => function'
+
+  Returns function after the given method has been removed from its
+  method table. Afterward, applying function to a sequence of
+  arguments cannot result in calling the method formerly defined to
+  correspond to the inout signature.
+
+
+Domains
+
+domain 'domain-data data
+       'method-adder adder-fn
+       'method-remover remover-fn
+       'method-selector selector-fn
+=> domain-object
+
+  Returns a newly-created domain object. The domain object can be
+  passed to make-function to create a new function that uses the
+  domain's rules for dispatch.
+
+  The arguments to domain determine the domain's rules for dispatch.
+
+    method-selector:
+      method-selector function-object values    
+      => effective-method, next-method, more-ordered-methods
+
+      The method selector takes as inputs the function object and a
+      sequence of input values. It returns the three values listed:
+      
+        effective-method is the method that will be applied to the
+        inputs
+        
+        next-method is the next-most-specific method, if such a thing
+        is defined in the domain, or false if not. If a next-method is
+        returned then it is bound to the variable next-method in the
+        environment in which the function is applied, so that user
+        code can call the next-most-applicable method.
+
+        more-ordered-methods is a sequence of additional applicable
+        methods, ordered from most specific to least, if such an
+        ordering is defined in the domain, or false if not. The
+        sequence of methods is bound to the variable
+        other-applicable-methods in the environment in which the
+        function is applied.
+
+    The metnhod selector can choose and order the applicable methods
+    in any way its author likes.
+
+    domain-data:
+
+    domain-data is an abritrary data structure, used as auxiliary data
+    for the method selector, and for the custom method-adder and
+    -remover, if any. domain-data may be any data structure the author
+    of the domain finds useful. A tyicapl use for the domain data
+    might be to store a cache of ordered methods in order to speed up
+    dispatch. If a domain's implementation has no need of such
+    auxiliary data then domain-data may be omitted.
+
+    method-adder and method-remover:
+
+    method-adder function method => function'
+    method-remover function signature => function'
+  
+    These two functions, if supplied, are used to add methods to and
+    remove methods from function objects. Both are optional; if they
+    are omitted then default versions are used. The method adder and
+    remover provide a way for domain authors to customize the addition
+    and removal of methods on functions. A typical use for them might
+    be to validate a new method's signature before adding it, in order
+    to preserve invariants in dispatching so that adding a new method
+    doesn't introduce ambiguity into the dispatch.
+
+----------------------
+V. THE EXAMPLE DOMAINS
+----------------------
+
+This release of Categories includes two example domains, named -flat-
+and -c3-. The -flat- domain provides polymorphic dispatch on the types
+of function arguments, without any support for subtype/supertype
+relationships. A method is selected by dispatch if and only if the
+types of the inputs are exactly the types metnioned in a method
+signature. In the event that no exact match is found, an error is
+signaled; no attemnpt is made to match against a more inclusive
+type--the -flat- domain doesn't support the concept of more inclusive
+types.
+
+The -c3- domain, by contrast, supports subtype and supertype
+relationships with multiple inheritance. The algorithm used to
+determine the order of specificity of applicable methods is due to the
+paper at
+
+  http://192.220.96.201/dylan/linearization-oopsla96.html
+
+This algorithm, commonly called "C3", has the virtues of yielding a
+deterministic disptach and avoiding unexpected results in the great
+majority of cases.
+
+This version of the C3 implementation is extremely inefficient. Future
+releases will update the implementation to use some straightforward
+optimizations that are present in earlier prorotypes of Categories,
+such as caching computed precedence lists.
+
+In addition, there are some special considerations about using C3 with
+Clojure; see the README file for the Clojure implementation for more
+details.
+
+The Flat Domain
+
+The API for the -flat- domain consists of:
+
+-flat-
+
+  The domain object that represents the -flat- domain.
+
+flat:method ((arg1 qualifier1) ...) e1 e2...) => method-object
+
+  Returns a method suitable for use with a function defined on the
+  -flat- domain. The parameters given by arg1... are the names of
+  formal parameters that are bound to input arguments in the body of
+  the method. The qualifiers given by qualifier1... are references to
+  type objects; the method being created will be called only if the
+  input arguments match the mentioned types (that is, only if each
+  input's type is equal to the type mentioned in the corresponding
+  qualifier). The expressions e1 e2... form the body of the method,
+  and can be any valid expressions.
+
+  In Clojure, this function is called xg.categories.domains.flat/method.
+
+The C3 Domain
+
+The API for the -c3- domain consists of:
+
+-c3-
+
+  The domain object that represents the -c3- domain.
+
+<anything>
+
+  The common supertype of all value types.
+
+c3:all-supertypes domain type => precedence-list
+
+  Returns a sequence of all the type's supertypes, beginning with
+  itself, and ordered from most specific to least, according to the C3
+  algorithm. The C3 domain uses this ordering to determine which of
+  several applicable methods is most specific to a given set of inputs
+  to a function.
+
+  In Clojure, this function is called xg.categories.domains.c3/all-supertypes.
+
+c3:direct-supertypes domain type => precedence-list
+
+  Returns a sequence of all the type's immediate supertypes.
+
+  In Clojure, this function is called xg.categories.domains.c3/direct-supertypes.
+
+c3:derive-type! domain type supertypes
+
+  Returns domain, after altering its type graph so that type's direct
+  supertypes are the type objects given. If it isn't possible to
+  rearrange the type graph to accommodate the new supertype
+  relationships then an error is signaled.
+
+  In Clojure, this function is called xg.categories.domains.c3/derive-type!.
+
+c3:remove-type! domain type
+
+  Returns domain, after altering its type graph so that given type no
+  longer appears in it. After this function succeeds, the results of
+  deriving a type from it, defining a method on it, or applying a
+  function with a method defined on it are undefined.
+
+  In Clojure, this function is called xg.categories.domains.c3/remove-type!.
+
+
+c3:method ((arg1 qualifier1) ...) e1 e2...) => method-object
+
+  Returns a method suitable for use with a function defined on the
+  -c3- domain. The parameters given by arg1... are the names of formal
+  parameters that are bound to input arguments in the body of the
+  method. The qualifiers given by qualifier1... are references to type
+  objects; the method being created will be called only if the input
+  arguments match the mentioned types (that is, only if each input's
+  type is the type mentioned in the corresponding qualifier, or a
+  subtype of it, according to the -c3- domain). The expressions e1
+  e2... form the body of the method, and can be any valid expressions.
+
+  In Clojure, this function is called xg.categories.domains.c3/method.
 

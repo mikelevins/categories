@@ -11,9 +11,9 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(ns com.mikelevins.categories.c3)
+(ns xg.categories.c3)
 
-(refer 'com.mikelevins.categories.utils)
+(refer 'xg.categories.utils)
 
 
 ;;; ----------------------------------------------------------------------

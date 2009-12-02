@@ -13,7 +13,7 @@
 
 ;;; modify if the Categories sources are at another pathname
 
-(define $root "/Users/mikel/Valise/bywicket/categories/scm")
+(define $root "/Users/mikel/Valise/xg/repositories/categories/scm")
 
 ;;; ----------------------------------------------------------------------
 ;;; About

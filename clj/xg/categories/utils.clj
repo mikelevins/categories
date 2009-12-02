@@ -11,7 +11,7 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(ns com.mikelevins.categories.utils)
+(ns xg.categories.utils)
 
 (defn str-or-nil [x] (if (nil? x) "nil" (str x)))
 

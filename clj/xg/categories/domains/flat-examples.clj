@@ -1,9 +1,9 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          c3-exmaples.clj
+;;;; Name:          flat-exmaples.clj
 ;;;; Project:       Categories
-;;;; Purpose:       examples using the -c3-domain
+;;;; Purpose:       examples using the -flat-domain
 ;;;; Author:        mikel evins
 ;;;; Copyright:     Copyright 2009 by mikel evins, all rights reserved
 ;;;; License:       Licensed under the Apache License, version 2.0
@@ -11,25 +11,18 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(in-ns 'com.mikelevins.categories.domains.c3)
+(in-ns 'xg.categories.domains.flat)
 
 ;;; ======================================================================
 ;;; -flat- examples
 ;;; ======================================================================
 
-(def print-user (function -c3-))
+(def print-user (function -flat-))
 
 (def <user> (structure [] (:username :default false) (:password :default false)))
-(derive-type! -c3- <user> (list <anything>))
-
 (def <admin> (structure [<user>] (:roles :default false)))
-(derive-type! -c3- <admin> (list <user>))
-
 (def <trial> (structure [] (:start-date :default false)))
-(derive-type! -c3- <trial> (list <anything>))
-
 (def <trial-user> (structure [<user> <trial>]))
-(derive-type! -c3- <trial-user> (list <user> <trial>))
 
 (add-method! print-user
              (method [[u <user>]]
@@ -37,14 +30,14 @@
 
 (add-method! print-user
              (method [[u <admin>]]
-               (next-method u)
-               (println (format "\nAdministrator Roles: %s" 
+               (println (format "\nAdministrator: %s; Roles: %s" 
+                                (get-key u :username)
                                 (get-key u :roles)))))
 
 (add-method! print-user
              (method [[u <trial-user>]]
-               (next-method u)
-               (println (format "\n[Trial] Start date: %s" 
+               (println (format "\nTrial user: %s; Start date: %s" 
+                                (get-key u :username)
                                 (get-key u :start-date)))))
 
 (def $user (make <user> :username "fred" :password "dino"))
@@ -56,25 +49,25 @@
 (print-user $trial)
 
 
-(def times (function -c3-))
+(def times (function -flat-))
 
 (add-method! times
-             (method [[n java.lang.Number][x java.lang.Number]]
+             (method [[n java.lang.Integer][x java.lang.Integer]]
                (* n x)))
 
 (add-method! times
-             (method [[x java.lang.Number][y java.lang.Number][z java.lang.Number]]
+             (method [[x java.lang.Integer][y java.lang.Integer][z java.lang.Integer]]
                (* x y z)))
 
 (add-method! times
-             (method [[n java.lang.Number][s java.lang.String]]
+             (method [[n java.lang.Integer][s java.lang.String]]
                (apply str (take n (cycle [s])))))
 
 (add-method! times
-             (method [[n java.lang.Number][s clojure.lang.Symbol]]
+             (method [[n java.lang.Integer][s clojure.lang.Symbol]]
                (take n (cycle [s]))))
 
 (times 2 3) ; => 6
-(times 2 3.0 4) ; => 24
+(times 2 3 4) ; => 24
 (times 2 "Foo") ; => "FooFoo"
 (times 2 'bob) ; => #(bob bob)

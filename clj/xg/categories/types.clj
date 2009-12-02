@@ -11,11 +11,11 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(ns com.mikelevins.categories.types
+(ns xg.categories.types
   (:refer-clojure :exclude [type]))
 
-(refer 'com.mikelevins.categories.utils)
-(refer 'com.mikelevins.categories.structures)
+(refer 'xg.categories.utils)
+(refer 'xg.categories.structures)
 
 ;;; ======================================================================
 ;;; Type Tags

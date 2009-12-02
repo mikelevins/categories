@@ -1,8 +1,5 @@
 #!/bin/sh -e
 
-# enable profiling
-# export DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}:/Applications/YourKit_Java_Profiler_8.0.4.app/bin/mac/libyjpagent.jnilib
-
 SWANK_JAR=:/Users/mikel/emacs/site/swank-clojure/swank-clojure.jar
 BASE=/Users/mikel/Valise/bywicket/categories
 LIB=${BASE}/lib/jar
@@ -29,7 +26,6 @@ classpath=${clojure_jar}:${clojure_contrib_jar}:${project_jars}:${SRC}:${CLASSES
 
 cd ${BASE}
 
-#     -agentpath:/Applications/YourKit_Java_Profiler_8.0.4.app/bin/mac/libyjpagent.jnilib \
 java -Dclojure.compile.path="${CLASSES}" -server \
      -cp  ${classpath}\
      clojure.lang.Repl
