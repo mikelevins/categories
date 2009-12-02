@@ -13,7 +13,14 @@
 
 
 (ns xg.categories.domains.c3
-  (:refer-clojure :exclude [type]))
+  (:refer-clojure :exclude [type])
+  (:require xg.categories.utils
+            xg.categories.structures
+            xg.categories.types
+            xg.categories.domains
+            xg.categories.functions
+            xg.categories
+            xg.categories.c3))
 
 (refer 'xg.categories.utils)
 (refer 'xg.categories.structures)

@@ -11,7 +11,8 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(ns xg.categories.c3)
+(ns xg.categories.c3
+  (:require xg.categories.utils))
 
 (refer 'xg.categories.utils)
 

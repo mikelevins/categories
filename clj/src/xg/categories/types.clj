@@ -12,7 +12,9 @@
 ;;;; ***********************************************************************
 
 (ns xg.categories.types
-  (:refer-clojure :exclude [type]))
+  (:refer-clojure :exclude [type])
+  (:require xg.categories.utils
+            xg.categories.structures))
 
 (refer 'xg.categories.utils)
 (refer 'xg.categories.structures)
@@ -96,4 +98,5 @@
     (category-type? t) (:predicate t)
     (structure-basis? t) (:predicate (meta t))
     :else (error "Not a type: " t)))
+
 

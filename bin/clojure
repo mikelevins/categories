@@ -1,10 +1,10 @@
 #!/bin/sh -e
 
 SWANK_JAR=:/Users/mikel/emacs/site/swank-clojure/swank-clojure.jar
-BASE=/Users/mikel/Valise/bywicket/categories
-LIB=${BASE}/lib/jar
+BASE=/Users/mikel/Valise/xg/repositories/categories/clj
+LIB=${BASE}/lib
 CLASSES=${BASE}/classes
-SRC=${BASE}/clj
+SRC=${BASE}/src
 
 # clojure
 clojure_jar=/usr/local/clojure/clojure.jar
@@ -14,7 +14,7 @@ clojure_contrib_jar=/usr/local/clojure-contrib/clojure-contrib.jar
 
 # project library jars
 for file in ${LIB}/*.jar; do
-    project_jars=project_jars:$file
+    project_jars=${project_jars}:$file
 done
 
 # swank classes

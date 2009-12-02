@@ -12,7 +12,13 @@
 ;;;; ***********************************************************************
 
 (ns xg.categories.domains.flat
-  (:refer-clojure :exclude [type]))
+  (:refer-clojure :exclude [type])
+  (:require xg.categories.utils
+            xg.categories.structures
+            xg.categories.types
+            xg.categories.domains
+            xg.categories.functions
+            xg.categories))
 
 (refer 'xg.categories.utils)
 (refer 'xg.categories.structures)
