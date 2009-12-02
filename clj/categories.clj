@@ -12,7 +12,7 @@
 ;;;; ***********************************************************************
 
 (def $src-root "/Users/mikel/Valise/xg/repositories/categories/clj")
-(def $categories-root (str $src-root "/xg"))
+(def $categories-root (str $src-root "/src/xg"))
 (load-file (str $src-root "/defsystem.clj"))
 
 (require 'clojure.contrib.repl-utils)
