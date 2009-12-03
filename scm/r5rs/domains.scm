@@ -18,7 +18,7 @@
 
 (define (default-method-remover)
   (lambda (fun sig)
-    (let* ((mtable (fun:get-method-table fun)))
+    (let* ((mtable (get-method-table fun)))
       (fun:remove-method-entry! mtable sig))))
 
 (define <domain> 
