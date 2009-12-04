@@ -116,7 +116,7 @@
                    ((structs:structure-basis? val) <structure>)
                    ((types:primitive-type? val) <primitive-type>)
                    ((types:synonym-type? val) <synonym>)
-                   ((types:cateogory-type? val) <category>)
+                   ((types:category-type? val) <category>)
                    (else <vector>)))
    ;; procedures
    ((procedure? val) <procedure>)
