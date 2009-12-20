@@ -1,45 +1,20 @@
-<project name="categories" default="build">
-  <property name="buildroot" location="."/>
-  <property name="lib.xg" location="${buildroot}/lib"/>
-  <property name="lib.clojure" location="/usr/local/clojure/clojure.jar"/>
-  <property name="lib.clojure.contrib" location="/usr/local/clojure/clojure-contrib/clojure-contrib.jar"/>
-  <property name="src" location="${buildroot}/src"/>
-  <property name="classdir" location="${buildroot}/classes"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See commented blocks below for -->
+<!-- some examples of how to customize the build. -->
+<!-- (If you delete it and reopen the project it will be recreated.) -->
+<!-- By default, only the Clean and Build commands use this build script. -->
+<!-- Commands such as Run, Debug, and Test only use this build script if -->
+<!-- the Compile on Save feature is turned off for the project. -->
+<!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
+<!-- in the project's Project Properties dialog box.-->
+<!DOCTYPE project [
+       <!ENTITY argfile SYSTEM "./argfile.xml">
+]>
+<project name="categories" default="default" basedir=".">
 
-  <target name="clean">
-    <delete dir="${classdir}"/>
-  </target>
 
-  <target name="prepare">
-    <mkdir dir="${classdir}"/>
-    <mkdir dir="${classdir}/categories"/>
-  </target>
-
-  <target name="build" depends="clean,prepare">
-    <java classname="clojure.lang.Compile" failonerror="true">
-      <sysproperty key="clojure.compile.path" value="${classdir}/categories"/>
-      <classpath>
-        <path location="${lib.clojure}"/>
-        <path location="${lib.clojure.contrib}"/>
-        <path location="${src}"/>
-        <path location="${classdir}/categories"/>
-      </classpath>
-      <arg value="xg.categories.utils"/>
-      <arg value="xg.categories.structures"/>
-      <arg value="xg.categories.types"/>
-      <arg value="xg.categories.domains"/>
-      <arg value="xg.categories.functions"/>
-      <arg value="xg.categories"/>
-      <arg value="xg.categories.domains.flat"/>
-      <arg value="xg.categories.c3"/>
-      <arg value="xg.categories.domains.c3"/>
-      </java>
-    <jar destfile="${lib.xg}/categories.jar"
-          basedir="${classdir}/categories">
-      <manifest>
-        <attribute name="Class-Path" value="."/>
-      </manifest>
-    </jar>    
-  </target>
+    <description>Builds, tests, and runs the project categories.</description>
+    <import file="clojure-build.xml"/>
 
 </project>
+
