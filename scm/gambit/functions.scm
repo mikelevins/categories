@@ -37,10 +37,11 @@
 ;;; representing methods
 ;;; ----------------------------------------------------------------------
 
-(define <method> (structure () signature method-function))
+(define <method> (structure () signature method-function domain))
 
 (define fun:method-signature (getter <method> 'signature))
 (define fun:method-function (getter <method> 'method-function))
+(define fun:method-domain (getter <method> 'domain))
 
 ;;; ----------------------------------------------------------------------
 ;;; method-tables
@@ -92,8 +93,11 @@
 (define (fun:add-method! fun meth)
   (let ((function-object (fun:function-object fun)))
     (if function-object
-        (let ((adder (dom:get-method-adder (get-domain function-object))))
-          (adder function-object meth))
+        (if (equal? (get-domain function-object)
+                    (fun:method-domain meth))
+            (let ((adder (dom:get-method-adder (get-domain function-object))))
+              (adder function-object meth))
+            (errs:error "Can't add method to function; wrong domain: " fun meth))
         (errs:error "Can't get reflection data for function: " fun))))
 
 (define (fun:remove-method! fun sig)

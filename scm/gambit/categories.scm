@@ -16,8 +16,6 @@
 ;;;; ABOUT
 ;;; ======================================================================
 ;;;; The Categories surface syntax.
-;;;; Many forms in this file are defined in the infrastructure, and are
-;;;; redefined here purely for reference purposes.
 
 ;;; ======================================================================
 ;;; Changes

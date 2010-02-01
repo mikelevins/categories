@@ -16,5 +16,6 @@
         (quals (map cadr args)))
     `(make <method>
        'signature (list ,@quals)
-       'method-function (lambda ,ids ,@body))))
+       'method-function (lambda ,ids ,@body)
+       'domain =c3=)))
 

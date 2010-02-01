@@ -31,7 +31,7 @@
     "/gambit/types.scm"
     "/gambit/domains.scm"
     "/gambit/functions.scm"
-    "/gambit/categories.scm"
+    ;;;"/gambit/categories.scm" -- refernce only; not loaded
     "/gambit/flat-domain.scm"
     "/gambit/flat-domain-macros.scm"
     "/gambit/c3.scm"
