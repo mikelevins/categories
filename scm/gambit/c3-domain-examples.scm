@@ -3,7 +3,7 @@
 ;;;;
 ;;;; Name:          c3-domain-examples.scm
 ;;;; Project:       Categories
-;;;; Purpose:       Example uses of the -c3- domain
+;;;; Purpose:       Example uses of the =c3= domain
 ;;;; Author:        mikel evins
 ;;;; Copyright:     Copyright 2009 by mikel evins, all rights reserved
 ;;;; License:       Licensed under the Apache License, version 2.0
@@ -16,22 +16,22 @@
 
 ;;; using a simple set of structure types
 
-(define print-user (function -c3-))
+(define print-user (function =c3=))
 
 (define <user> (structure () username password))
-(c3:derive-type! -c3- <user> (list <anything>))
+(c3:derive-type! =c3= <user> (list <anything>))
 
 (define <admin> (structure (<user>) roles))
-(c3:derive-type! -c3- <admin> (list <user>))
+(c3:derive-type! =c3= <admin> (list <user>))
 
 (define <trial> (structure () start-date))
-(c3:derive-type! -c3- <trial> (list <anything>))
+(c3:derive-type! =c3= <trial> (list <anything>))
 
 (define <trial-user> (structure (<user> <trial>)))
-(c3:derive-type! -c3- <trial-user> (list <user> <trial>))
+(c3:derive-type! =c3= <trial-user> (list <user> <trial>))
 
-(c3:subtype-of? -c3- <trial-user> <user>) ; => #t
-(c3:subtype-of? -c3- <trial-user> <admin>) ; => #f
+(c3:subtype-of? =c3= <trial-user> <user>) ; => #t
+(c3:subtype-of? =c3= <trial-user> <admin>) ; => #f
 
 (add-method! print-user
              (c3:method ((u <user>))
@@ -65,7 +65,7 @@
 
 ;;; polymorphic methods on primitive types
 
-(define times (function -c3-))
+(define times (function =c3=))
 
 (add-method! times
              (c3:method ((n <number>)(x <number>))
@@ -76,6 +76,10 @@
                           (* x y z)))
 
 (add-method! times
+             (c3:method ((w <number>)(x <number>)(y <number>)(z <number>))
+                          (* w x y z)))
+
+(add-method! times
              (c3:method ((n <number>)(s <string>))
                           (apply string-append (vector->list (make-vector n s)))))
 
@@ -83,7 +87,7 @@
              (c3:method ((n <number>)(s <symbol>))
                           (make-vector n s)))
 
-(times 2 3) ; => 6
-(times 2 3.0 4.0) ; => 24.0
-(times 2 "Foo") ; => "FooFoo"
-(times 2 'bob) ; => #(bob bob)
+;;;(times 2 3) ; => 6
+;;;(times 2 3.0 4.0) ; => 24.0
+;;;(times 2 "Foo") ; => "FooFoo"
+;;;(times 2 'bob) ; => #(bob bob)

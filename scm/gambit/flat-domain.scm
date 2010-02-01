@@ -31,7 +31,7 @@
         (values meth #f #f)
         (values #f #f #f))))
 
-(define -flat- (domain 'method-selector flat:select-methods))
+(define =flat= (domain 'method-selector flat:select-methods))
 
 
 

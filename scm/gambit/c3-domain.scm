@@ -26,16 +26,32 @@
 ;;; other domains. 
 
 
-;;; First version: a C3 domain with no caching (this will be
-;;; inefficient, because many unnecessary precedence-list computations
-;;; will take place)
+;;; Version 0.3: a C3 domain with a simple method cache Each time
+;;; methods are ordered for a given sequence of argument types, the
+;;; ordered methods are cached in a method cache on a key consisting
+;;; of the sequence of argument types. Subsequently, calling the same
+;;; generic function on the same sequence of types fetches the same
+;;; ordered-methods list, rather than recomputing it.  Any operation
+;;; that changes the type graph (e.g. derive-type! or remove-type!) or
+;;; the set of defined methods (e.g. add-method! or remove-method!)
+;;; clears the cache. This has the result that dynamically changing
+;;; the type graph or defined methods temporarily slows down
+;;; method-dispatch, but method-dispatch in the common case is fast.
 
 (define <anything> (types:make-primitive-type '<anything> (lambda (x) #t)))
 (define <list-like> (types:make-primitive-type '<list-like> (lambda (x) (or (list? x)(pair? x)))))
 
 ;;; domain data: maintain the graph of types
 
-(define <c3-domain-data> (structure () (direct-supertypes setter: #t)))
+(define <c3-domain-data> 
+  (structure () 
+             (direct-supertypes setter: #t)
+             (method-cache setter: #t)))
+
+(define (c3:clear-method-cache dom)
+  (let* ((dom-data (get-key dom 'domain-data)))
+    (set-key! dom-data 'method-cache
+              (make-table test: equal?))))
 
 (define (c3:make-domain-data)
   (let ((standard-supers `((,<anything> . ())
@@ -94,7 +110,9 @@
                            (,<record> . (,<anything>))
                            (,<foreign> . (,<anything>))
                            (,<gambit-special-value> . (,<anything>)))))
-    (make <c3-domain-data> 'direct-supertypes standard-supers)))
+    (make <c3-domain-data>
+      'direct-supertypes standard-supers
+      'method-cache (make-table test: equal?))))
 
 ;;; supertype relations
 
@@ -114,6 +132,7 @@
 ;;; adding and removing types
 
 (define (c3:derive-type! dom tp supertypes)
+  (c3:clear-method-cache dom)
   (let* ((data (get-key dom 'domain-data))
          (entries (get-key data 'direct-supertypes))
          (entry (utils:get-entry entries tp eq? #f)))
@@ -124,6 +143,7 @@
                         entries)))))
 
 (define (c3:remove-type! dom tp)
+  (c3:clear-method-cache dom)
   (let* ((data (get-key dom 'domain-data))
          (entries (get-key data 'direct-supertypes)))
     (set-key! data 'direct-supertypes
@@ -181,12 +201,19 @@
                 #f
                 (c3:compare-signatures dom (cdr s1) (cdr s2)))))))
 
-(define (c3:order-methods fun vals)
+(define (c3:cached-methods fun vtypes)
+  (let ((mcache (get-key (get-key (get-domain fun) 'domain-data) 'method-cache)))
+    (table-ref mcache vtypes #f)))
+
+(define (c3:set-cached-methods! fun vtypes ordered-meths)
+  (let ((mcache (get-key (get-key (get-domain fun) 'domain-data) 'method-cache)))
+    (table-set! mcache vtypes ordered-meths)))
+
+(define (c3:order-methods fun vtypes)
   (let* ((dom (get-domain fun))
          (entries (fun:get-method-entries (get-method-table fun)))
-         (candidates (map car (utils:filter (lambda (entry)(= (length vals)(length (car entry))))
+         (candidates (map car (utils:filter (lambda (entry)(= (length vtypes)(length (car entry))))
                                                 entries)))
-         (vtypes (map type vals))
          (true? (lambda (x) x))
          (applicable-candidates (utils:filter (lambda (c)
                                                     (utils:every? true? (map (lambda (vt ct) (c3:subtype-of? dom vt ct))
@@ -199,7 +226,11 @@
     (utils:filter true? ordered-meths)))
 
 (define (c3:select-methods fun vals)
-  (let* ((meths (c3:order-methods fun vals)))
+  (let* ((vtypes (map type vals))
+         (meths (or (c3:cached-methods fun vtypes)
+                    (begin
+                      (c3:set-cached-methods! fun vtypes (c3:order-methods fun vtypes))
+                      (c3:cached-methods fun vtypes)))))
     (if (null? meths)
         (values #f #f #f)
         (let* ((effectivem (car meths)) 
@@ -213,7 +244,15 @@
                            #f)))
           (values effectivem nextm morems)))))
 
-(define -c3- (domain 'domain-data (c3:make-domain-data) 
-                     'method-selector c3:select-methods))
+(define =c3= (domain 'domain-data (c3:make-domain-data) 
+                     'method-selector c3:select-methods
+                     'method-adder (lambda (fun meth)
+                                     (let ((adder (default-method-adder)))
+                                       (c3:clear-method-cache (get-domain fun))
+                                       (adder fun meth)))
+                     'method-remover (lambda (fun sig)
+                                       (let ((remover (default-method-remover)))
+                                         (c3:clear-method-cache (get-domain fun))
+                                         (remover fun sig)))))
 
 

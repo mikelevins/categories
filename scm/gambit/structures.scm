@@ -168,3 +168,24 @@
 ;;; (set-key! instance key value) => instance'
 (define (set-key! s k v) 
   ((setter (structs:instance-basis s) k) s v))
+
+;;; private functions for supporting structure macros
+
+(define (%parse-key-qualifiers quals)(utils:plist->alist quals))
+
+(define (%parse-keyspec spec)
+  (if (symbol? spec)
+      `(list (quote ,spec) #f #f)
+      (if (and (pair? spec)
+               (symbol? (car spec)))
+          (let* ((quals (%parse-key-qualifiers (cdr spec)))
+                 (default (utils:get quals default: eq? #f))
+                 (setter? (utils:get quals setter: eq? #f)))
+            (cons 'list
+                  (cons `(quote ,(car spec))
+                        (list default setter?)))))))
+
+(define (%parse-keyspecs specs)
+  (map (lambda (s) (%parse-keyspec s))
+       specs))
+

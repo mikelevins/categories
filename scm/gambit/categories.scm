@@ -3,6 +3,7 @@
 ;;;;
 ;;;; Name:          categories.scm
 ;;;; Project:       Categories
+;;;; Version:       0.3
 ;;;; Purpose:       The public API
 ;;;; Author:        mikel evins
 ;;;; Copyright:     Copyright 2009 by mikel evins, all rights reserved
@@ -11,10 +12,26 @@
 ;;;;
 ;;;; ***********************************************************************
 
+;;; ======================================================================
 ;;;; ABOUT
+;;; ======================================================================
 ;;;; The Categories surface syntax.
 ;;;; Many forms in this file are defined in the infrastructure, and are
 ;;;; redefined here purely for reference purposes.
+
+;;; ======================================================================
+;;; Changes
+;;; ======================================================================
+;;; 0.3 
+;;; caching implemented for =c3= domain to drastically improve efficiency
+;;; - naming convention for domains changed to be friendlier to R6RS;
+;;;   -flat- changed to =flat=
+;;;   -c3- changed to =c3=
+;;; 0.2
+;;; - added implementations in R5RS and Clojure
+;;; - added -C3- domain
+;;; 0.1
+;;; - initial implementation
 
 ;;; ======================================================================
 ;;; Types

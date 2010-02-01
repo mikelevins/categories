@@ -3,7 +3,7 @@
 ;;;;
 ;;;; Name:          flat-domain-examples.scm
 ;;;; Project:       Categories
-;;;; Purpose:       Example uses of the -flat- domain
+;;;; Purpose:       Example uses of the =flat= domain
 ;;;; Author:        mikel evins
 ;;;; Copyright:     Copyright 2009 by mikel evins, all rights reserved
 ;;;; License:       Licensed under the Apache License, version 2.0
@@ -16,7 +16,7 @@
 
 ;;; using a simple set of structure types
 
-(define print-user (function -flat-))
+(define print-user (function =flat=))
 
 (define <user> (structure () username password))
 (define <admin> (structure (<user>) roles))
@@ -63,7 +63,7 @@
 
 ;;; polymorphic methods on primitive types
 
-(define times (function -flat-))
+(define times (function =flat=))
 
 (add-method! times
              (flat:method ((n <fixnum>)(x <fixnum>))
