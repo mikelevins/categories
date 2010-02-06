@@ -1,0 +1,31 @@
+#!/bin/sh -e
+
+SWANK_JAR=:/Users/mikel/emacs/site/swank-clojure/swank-clojure.jar
+BASE=/Users/mikel/Valise/xg/repositories/categories/clj
+LIB=${BASE}/lib
+CLASSES=${BASE}/classes
+SRC=${BASE}/src
+
+# clojure
+clojure_jar=/usr/local/clojure/clojure.jar
+
+#clojure-contrib
+clojure_contrib_jar=/usr/local/clojure-contrib/clojure-contrib.jar
+
+# project library jars
+for file in ${LIB}/*.jar; do
+    project_jars=${project_jars}:$file
+done
+
+# swank classes
+for file in ${SWANK_PATH}/*.jar; do
+    swank_classes=swank_classes:$file
+done
+
+classpath=${clojure_jar}:${clojure_contrib_jar}:${project_jars}:${SRC}:${CLASSES}:${SWANK_JAR}
+
+cd ${BASE}
+
+java -Dclojure.compile.path="${CLASSES}" -server \
+     -cp  ${classpath}\
+     clojure.lang.Repl

@@ -1,0 +1,51 @@
+Categories 0.3 Notes
+
+;;; ----------------------------------------------------------------------
+;;; Categories and Protocols
+;;; ----------------------------------------------------------------------
+
+(define Sequencing
+        (protocol (first <Sequence>)
+                  (rest <Sequence>)
+                  (nth <Sequence> <Index>)
+                  (concat <Sequence> <Sequence>))
+
+
+;;; ----------------------------------------------------------------------
+;;; Types
+;;; ----------------------------------------------------------------------
+
+0.3 provides three fundamental kinds of types: primitive types, cells, and
+composite types.
+
+Primitive types are built into the runtime.
+
+Cells are mutable storage containers for values. A future
+implementation of Categories will provide thread-safety guarantees for
+cells.
+
+Composite types are made by composing other primitive or composite
+types. A composite type maps a set of keys to values. The keys and
+values in composite types are immutable, but the values are allowed to
+be cells. In that case, although it is impossible to replace the cell
+in a given composite object, it is possible to change the value stored
+in the cell.
+
+Composite types fall into three families, distinguished by the kinds
+of keys:
+
+ - Sequence types map integer indexes to values. The keys of a
+   sequence are contiguous ranges of increasing integers starting at
+   zero.
+
+ - Record types map symbolic names to values. The keys of a record may
+   be any symbol, but each key may appear at most once in the
+   record. The set of keys of a given record type are fixed at the
+   time the record type is defined.
+
+ - Map types map arbitrary keys to values. Any value may be used as a
+   key in a map type, but duplicate keys are not allowed. (For the
+   purposes of map keys, two values are considered duplicates if they
+   are equal?).
+
+

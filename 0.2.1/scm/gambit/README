@@ -1,0 +1,82 @@
+This directory contains the Gambit-C-specific Scheme implementation of
+Categories.
+
+The file "load-gambit.scm" in the enclosing directory loads the
+Categories sybsystem. You need to edit the pathname at the top of that
+file first, before loading it into a Gambit session.
+
+
+The Categories API in Gambit
+
+This section gives examples of the Gambit syntax for the Categories API.
+
+Types
+-----
+
+  <anything>
+  <type>
+  <structure>
+  <synonym> 
+  <category>
+  <primitive-type>
+
+
+Type Functions And Macros
+-------------------------
+
+(define <my-user>
+  (structure (<user> <trial>)
+    (promotion-code default: "" setter: #f))
+
+(c3:derive-type! -c3- <my-user> (list <user> <trial>))
+
+(c3:remove-type! -c3- <my-user>)
+
+(get-key $my-user promotion-code:)
+
+(set-key! $my-user name: "Wilma")
+
+  Note: in most cases you're likely to see an error message, because
+        structures are immutable by default. Naturally, set-key!
+        doesn't work on immutable structures.
+
+(make <my-user> 'name "barney" 'password "bambam" 
+                'start-date "2009-12-1"
+                'promotion-code "Q"))
+
+(define <count> (synonym java.lang.Integer))
+
+(define <name> (category java.lang.String clojure.lang.Symbol clojure.lang.Keyword))
+
+(type 5)
+(type (make <my-user> name: "barney" password: "bambam" 
+                      'start-date "2009-12-1"
+                      'promotion-code "Q"))
+
+(instance-of? 5 <count>)
+(instance-of? 5 java.lang.Integer)
+
+(c3:subtype-of? (type 5) java.lang.Number)
+
+Functions
+---------
+
+(define print-user (make-function -c3-))
+
+(add-method! print-user
+             (c3:method ((u <my-user>))
+                 (next-method u)
+                 (display (format "  Promotion-code: ~a" 
+                           (get-key u promotion-code:)))))
+
+(remove-method! print-user (list <my-user>))
+
+
+Domains
+-------
+
+-c3-
+
+(c3:direct-supertypes -c3- <my-user>)
+
+(c3:all-supertypes -c3- <my-user>)
