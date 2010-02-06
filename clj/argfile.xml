@@ -1,9 +1,0 @@
- <arg value = "xg.categories" /> 
-<arg value = "xg.categories.c3" /> 
-<arg value = "xg.categories.domains" /> 
-<arg value = "xg.categories.domains.c3" /> 
-<arg value = "xg.categories.domains.flat" /> 
-<arg value = "xg.categories.functions" /> 
-<arg value = "xg.categories.structures" /> 
-<arg value = "xg.categories.types" /> 
-<arg value = "xg.categories.utils"/>
