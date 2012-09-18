@@ -1,0 +1,35 @@
+Categories README
+Copyright:     Copyright 2009 by mikel evins, all rights reserved
+License:       Licensed under the Apache License, version 2.0
+               See the accompanying file "License" for more information
+
+
+Categories is an experimental object system that provides polymorphic
+functions with multiple dispatch, user-defined structured data types,
+optional single or multiple inheritance, and programmable
+dispatch. 
+
+The object system is language-neutral, with implementations provided
+for R5RS Scheme, Gambit-C Scheme with Gambit-specific features, and
+Clojure. There are small differences in the API and semantics from one
+language host to another, especially with regard to the way that
+assignment to object slots is treated. Additional host languages may
+be supported in the future.
+
+You can use Categories by loading it into one of the supported host
+languages and writing code that uses Categories features. 
+
+Although this release of Categories is a very young version, and not
+in any sense production-ready, it is part of a larger
+product-development process, and is intended eventually to be suitable
+for use in production code. As the implementation evolves, preference
+will naturally be given to those features and host platforms that are
+in production use. Users of Categories will have the greatest
+influence on how it evolves.
+
+
+The released version of Categories is 0.2.1. The 0.3 drectory contains
+some experimental work on additional features, but work on Categories
+has stopped since I moved most of my efforts to the bard programming
+language project proper, and to folio, a Common Lisp library that
+provides some bard features.
