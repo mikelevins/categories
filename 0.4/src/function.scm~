@@ -1,0 +1,30 @@
+;;;; ***********************************************************************
+;;;; FILE IDENTIFICATION
+;;;;
+;;;; Name:          function.scm
+;;;; Project:       Categories
+;;;; Purpose:       the Categories object system
+;;;; Author:        mikel evins
+;;;; Copyright:     2013 by mikel evins
+;;;;
+;;;; ***********************************************************************
+
+(define (function-best-method method-table type-list)
+  #f)
+
+(define (function-metadata fn)
+  #f)
+
+(define (make-dispatcher)
+  (let ((metadata (make-table test: eqv?)))
+    (lambda params
+      (let* ((types (map value-type params))
+             (method (function-best-method (table-ref metadata dispatcher:)
+                                           types)))
+        (apply method params)))))
+
+(define (make-function)
+  (let ((fn (make-dispatcher)))
+    (table-set! (function-metadata fn) dispatcher: fn)
+    fn))
+

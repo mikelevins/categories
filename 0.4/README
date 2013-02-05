@@ -1,0 +1,126 @@
+Categories 0.4
+
+Since I released Categories 0.2.1, and tinkered with 0.3, I've made a
+great deal of pregress wth Bard, the language on which the ideas of
+Categories are based, and on folio, a Common Lisp library that brings
+a number of Bard idioms to that language.
+
+Now I find myself working on applications written in Scheme that would
+benefit a great deal from the ideas developed in my work on those
+systems.
+
+Categories 0.4 is a redesign of the Categories object system for
+Scheme in light of those developments.
+
+It's also a practical library intended for production use, unlike
+earlier versions, which were more in the nature of research. With that
+in mind, Categories 0.4 is deisgned to be used with Gambit Cheme, and
+it takes advantage of some Gambit-specific extensions.
+
+It's not impossible that future versions of Categories will support
+other Schemes, and perhaps even other languages, but for now, my
+effort is focused on practically supporting application-development
+work in Gambit.
+
+Design
+
+Categories 0.4 incompletely and imperfectly embeds Bard's system of
+generic functions and protocols into Scheme. Here's a sketch of how
+that embedding is organized.
+
+Protocols
+
+As in Bard, the basic unit of organization in Categories is the
+protocol. A protocol is a defined set of functions that map typed
+inputs to typed outputs.
+
+Protocols are represented in Categories 0.4 as instances of a Gambit
+record type.
+
+Functions
+
+A function in Categories 0.4 is a generic procedure that, given a set
+of arguments, determines a suitable method to apply to the arguments
+to compute a result. Categories functions are polymorphic, by
+definition.
+
+Functions are represented in Categories 0.4 as Gambit closures. The
+body of the closure is a dispatch procedure that selects the method to
+be applied. Stored in the closure's lexical environment is a table of
+metadata, including the mapping from types to methods.
+
+Methods
+
+A method in Categories 0.4 is an ordinary Scheme lambda. It's a method
+by virtue of being assocaited with a type signature in the method
+table of some function.
+
+Types
+
+Categories 0.4 has its own notion of types, based on the Bard type
+system. It subsumes the native Scheme type system in Gambit.
+
+Classes
+
+A class is an abstract type that identifies a role played by values in
+protocol function.
+
+Classes are represented in Categories 0.4 as symbols. Bard's
+convention is that classes and protocols are named using capitalized
+words; Categories 0.4 takes advantage of Gambit's support for
+case-sensitive symbols to make that convention more convenient than it
+would be in standard Scheme.
+
+Schemas
+
+A schema is a concrete type--that is, a concrete description of how
+data are laid out in memory.
+
+There are two kinds of schemas in Categories 0.4: schemas that are
+built into Gambit andschemas that are defined using Gambit's
+define-type feature.
+
+Singletons
+
+Bard and Categories support the concept of singleton types. A
+singleton type is a value treated as if it were a type. Another way to
+put it is that (singleton 5) is the type with just a single instance:
+the value 5.
+
+Singleton types make it convenient to write methods that specialize on
+a specific value. That idiom in turn makes it convenient to handle
+special-case values in a way that doesn't force you to completely
+rewrite case logic every time you want to add a single new case. If
+you structure case logic in terms of methods that specialize on
+singletons, then you can add a new case by simply writing a single new
+method.
+
+Metatypes
+
+Among the schemas and classes in Categories 0.4 are several that
+represent, not values likely to be used in most user programs, but
+values that are themselves types. The Class named "Class" is an
+example; it's the class of values that are classes. Another example is
+the schema <schema>; it's a record type whose instances are
+schemas. Those schemas in turn represent the types of values in
+Categories.
+
+THe purpose of this rigamarole is to provide some conveniences for
+working with types in Categories. With these conveniences in place,
+for example, it's straightfoward to provide syntax for defining
+specialized methods by referencing the type objects on which you want
+to specialize.
+
+Method Dispatch
+
+Categories 0.4 uses C3 type linearization for method dispatch. All of
+Gambit's types are made into schemas, and each schema is a member of
+at least one class. The classes are arranged into a graph of
+subtype/supertype relations. You can write methods that specialize on
+a class and those methods are applicable not only to the class, but
+also to any subclasses and schemas that descend from it.
+
+Like Bard, Categories does not support the other piece of traditional
+class-based inheritance: there is no inheritance of data layout. Each
+schema's structure is independent of all others.
+
